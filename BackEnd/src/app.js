@@ -8,8 +8,8 @@ const app = express();
 // CORS: allow your local dev + production frontend domain(s)
 app.use(cors({
   origin: [
-    'http://localhost:5173',                  // local Vite
-    'https://your-app-name.onrender.com'      // ← replace with your actual Render URL after deploy
+    'http://localhost:5173',                   // local Vite dev
+    'https://geminiai-codereviewer-7.onrender.com' // deployed frontend
   ],
   methods: ['GET', 'POST'],
   credentials: true,
@@ -18,10 +18,6 @@ app.use(cors({
 app.use(express.json());
 
 // Your API routes
-app.get('/', (req, res) => {
-  res.send('Hello World from backend');
-});
-
 app.use('/ai', aiRoutes);
 
 // Serve built Vite/React frontend in production
@@ -33,6 +29,17 @@ if (process.env.NODE_ENV === 'production') {
   app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '../../Frontend/dist', 'index.html'));
   });
+} else {
+  // Only show this in development
+  app.get('/', (req, res) => {
+    res.send('Hello World from backend');
+  });
 }
+
+// Start server
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
+});
 
 module.exports = app;
